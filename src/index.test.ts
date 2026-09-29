@@ -116,8 +116,17 @@ describe("rewrite", () => {
       expect(rewrite("npm test")).toBe("rtk npm test")
     })
 
-    test("rewrites npm run", () => {
-      expect(rewrite("npm run build")).toBe("rtk npm build")
+    test("preserves npm run and its arguments", () => {
+      for (const command of ["npm run build", "npm run --if-present build -- --watch"]) {
+        const rewritten = rewrite(command)
+        expect(rewritten).toBe(`rtk npm ${command.slice("npm ".length)}`)
+
+        const actual = Bun.spawnSync(["rtk", ...rewritten!.split(" ").slice(1), "--help"], {
+          stdout: "pipe",
+          stderr: "pipe",
+        })
+        expect(actual.exitCode).not.toBe(2)
+      }
     })
 
     test("rewrites tsc", () => {
@@ -194,6 +203,12 @@ describe("rewrite", () => {
 
     test("rewrites mix ecto.migrations", () => {
       expect(rewrite("mix ecto.migrations")).toBe("rtk mix ecto.migrations")
+    })
+
+    test("preserves the selected Ecto migration command", () => {
+      expect(rewrite("mix ecto.migrate --repo MyApp.Repo")).toBe(
+        "rtk mix ecto.migrate --repo MyApp.Repo",
+      )
     })
 
     test("rewrites generic mix commands", () => {

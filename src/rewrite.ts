@@ -45,7 +45,8 @@ const RULES: [RegExp, (cmd: string) => string][] = [
   [/^(pnpm\s+)?(npx\s+)?vitest(\s|$)/, (c) => c.replace(/^(pnpm )?(npx )?vitest( run)?/, "rtk vitest run")],
   [/^pnpm\s+test(\s|$)/, (c) => c.replace(/^pnpm test/, "rtk vitest run")],
   [/^npm\s+test(\s|$)/, (c) => c.replace(/^npm test/, "rtk npm test")],
-  [/^npm\s+run\s+/, (c) => c.replace(/^npm run /, "rtk npm ")],
+  // Preserve the `run` verb; RTK's npm wrapper accepts npm run arguments.
+  [/^npm\s+run(\s|$)/, (c) => c.replace(/^npm\s+run/, "rtk npm run")],
   [/^(npx\s+)?vue-tsc(\s|$)/, (c) => c.replace(/^(npx )?vue-tsc/, "rtk tsc")],
   [/^pnpm\s+tsc(\s|$)/, (c) => c.replace(/^pnpm tsc/, "rtk tsc")],
   [/^(npx\s+)?tsc(\s|$)/, (c) => c.replace(/^(npx )?tsc/, "rtk tsc")],
@@ -88,7 +89,7 @@ const RULES: [RegExp, (cmd: string) => string][] = [
   [/^mix\s+format(\s|$)/, (c) => c.replace(/^mix format/, "rtk format mix format")],
   [/^mix\s+dialyzer(\s|$)/, (c) => c.replace(/^mix dialyzer/, "rtk err mix dialyzer")],
   [/^mix\s+compile(\s|$)/, (c) => c.replace(/^mix compile/, "rtk mix compile")],
-  [/^mix\s+ecto\.(migrate|migrations)(\s|$)/, (c) => c.replace(/^mix ecto\.(migrate|migrations)/, "rtk mix ecto.\$1")],
+  [/^mix\s+ecto\.(migrate|migrations)(\s|$)/, (c) => c.replace(/^mix ecto\.(migrate|migrations)/, "rtk mix ecto.$1")],
   [/^mix\s+help(\s|$)/, (c) => c.replace(/^mix help/, "rtk --cache mix help")],
   [/^mix\s+/, (c) => c.replace(/^mix /, "rtk mix ")],
   [/^iex\s+/, (c) => c.replace(/^iex /, "rtk iex ")],
